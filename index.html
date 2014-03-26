@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html ng-app="App">
+<head>
+
+</head>
+<body>
+
+<div ng-controller="AppController">
+    Property {{phrase}} ({{clickCount}} clicks mod 5)<br><br>
+
+    <div ng-controller="InnerController">
+        <button ng-click="buttonClick()">{{buttonText}}</button>
+    </div>
+</div>
+
+<script src="script/angular.js"></script>
+<script src="script/kotlin.js"></script>
+<script src="out/production/kotlin-angular/kotlin-angular.js"></script>
+</body>
+</html>
