@@ -1,19 +1,55 @@
 package todo
 
 import js.LocalStorage
+import angular.*
 
-class TodoStorage {
-    private val STORAGE_ID = "TODOS-angularjs"
+native class Todo() {
+    var title: String? = js.noImpl
+    var completed: Boolean = js.noImpl
+}
 
-    fun get(): Array<Todo> {
-        var data = localStorage.getItem(STORAGE_ID)
-        if(data == null) {
-            data = "[]"
-        }
-        return JSON.parse<String>(data!!) as Array<Todo>
+fun Todo(title: String, completed: Boolean = false) : Todo {
+    val todo = json() as Todo
+    todo.title = title
+    todo.completed = completed
+    return todo
+}
+
+class TodoService() {
+    class object {
+        private val STORAGE_ID = "TODOS-angularjs"
     }
 
-    fun put(data: Array<Todo>) {
-        localStorage.setItem(STORAGE_ID, JSON.stringify(data))
+    var todos = {
+        var data = localStorage.getItem(STORAGE_ID)
+        if (data == null) {
+            data = "[]"
+        }
+        Ng.log.info(data!!)
+        JSON.parse<Array<Todo>>(data!!)
+    }()
+
+    fun addTodo(newTodo: String) {
+        if(newTodo.length > 0) {
+            todos.push(Todo(newTodo))
+        }
+    }
+
+    fun remove(todo: Todo) {
+        todos.splice(todos.indexOf(todo), 1)
+    }
+
+    fun save() {
+        val stringify = JSON.stringify(todos)
+        Ng.log.info(stringify)
+        localStorage.setItem(STORAGE_ID, stringify)
+    }
+
+    fun markAll(completed: Boolean) {
+        todos.forEach({ it.completed = completed })
+    }
+
+    fun clearCompletedTodos() {
+        todos = todos.filter({ !it.completed })
     }
 }

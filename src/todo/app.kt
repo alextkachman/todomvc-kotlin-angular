@@ -8,7 +8,7 @@ native trait FilterFilter {
 }
 
 object TodoModule : Module("todomvc") {
-    val todoStorage by factory("todoStorage", { TodoStorage() });
+    val todoService by factory("todoService", { TodoService() });
 
     {
         directive(TodoFocus(), TodoBlur())

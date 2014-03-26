@@ -3,19 +3,14 @@ package todo
 import angular.*
 
 native("Object")
-class Todo {
-    var title: String? = js.noImpl
-    var completed: Boolean = js.noImpl
-}
-
-native("Object")
 class StatusFilter {
     native var completed: Boolean? = js.noImpl
 }
 
-fun StatusFilter.invoke(v: Boolean): StatusFilter {
-    completed = v
-    return this
+fun StatusFilter(v: Boolean): StatusFilter {
+    var sf = json() as StatusFilter
+    sf.completed = v
+    return sf
 }
 
 native trait TodoScope: Scope {
@@ -35,20 +30,20 @@ native trait TodoScope: Scope {
     var markAll: (Boolean) -> Unit
 }
 
-
-
 class TodoCtrl: Controller<TodoScope>("TodoCtrl") {
     override fun TodoScope.invoke() {
         this.location = Ng.location
 
-        todos = TodoModule.todoStorage.get()
+        val todoService = TodoModule.todoService
+        todos = todoService.todos
         newTodo = ""
         editedTodo = null
 
         watch<Unit>("todos", true) {
-            remainingCount = Ng.filter("filter")(todos, StatusFilter()(false)).size
-            completedCount = todos.length - remainingCount
+            remainingCount = Ng.filter("filter")(todos, StatusFilter(false)).size
+            completedCount = todoService.todos.length - remainingCount
             allChecked = remainingCount == 0
+            todoService.save();
         }
 
         if(location.path() == "") {
@@ -58,20 +53,21 @@ class TodoCtrl: Controller<TodoScope>("TodoCtrl") {
         watch<String>("location.path()", { path ->
             Ng.log.info(path)
             statusFilter = when(path) {
-                "/active" -> StatusFilter()(false)
-                "/completed" -> StatusFilter()(true)
+                "/active" -> StatusFilter(false)
+                "/completed" -> StatusFilter(true)
                 else -> null
             }
         })
 
         addTodo = {
             if(newTodo.length > 0) {
-                val todo = Todo()
-                todo.title = newTodo
-                todo.completed = false
-                todos.push(todo)
+                todoService.addTodo(newTodo)
                 newTodo = ""
             }
+        }
+
+        removeTodo = { todo ->
+            todoService.remove(todo)
         }
 
         editTodo = { todo ->
@@ -81,20 +77,17 @@ class TodoCtrl: Controller<TodoScope>("TodoCtrl") {
         doneEditing = { todo ->
             editedTodo = null
             if(todo.title == null) {
-                removeTodo(todo)
+                todoService.remove(todo)
             }
         }
 
-        removeTodo = { todo ->
-            todos.splice(todos.indexOf(todo), 1)
-        }
-
         clearCompletedTodos = {
-            todos = todos.filter({ !it.completed })
+            todoService.clearCompletedTodos()
+            todos = todoService.todos
         }
 
         markAll = { completed ->
-            todos.forEach({ it.completed = completed })
+            todoService.markAll(completed)
         }
     }
 }

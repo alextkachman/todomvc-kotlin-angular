@@ -13,3 +13,6 @@ native trait LocalStorage {
 }
 
 native("localStorage") val localStorage: LocalStorage = js.noImpl
+
+native("alert") fun alert(s: Any) = js.noImpl
+
