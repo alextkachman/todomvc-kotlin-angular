@@ -9,12 +9,13 @@ class Todo {
 }
 
 native("Object")
-class StatusFilter(c : Boolean) {
+class StatusFilter {
     native var completed: Boolean? = js.noImpl
+}
 
-    {
-        completed = c
-    }
+fun StatusFilter.invoke(v: Boolean): StatusFilter {
+    completed = v
+    return this
 }
 
 native trait TodoScope: Scope {
@@ -45,8 +46,7 @@ class TodoCtrl: Controller<TodoScope>("TodoCtrl") {
         editedTodo = null
 
         watch<Unit>("todos", true) {
-            remainingCount = 0 // Ng.filter(todos, false).size
-            completedCount = todos.length - remainingCount
+            remainingCount = Ng.filter("filter")(todos, StatusFilter()(false)).size
             completedCount = todos.length - remainingCount
             allChecked = remainingCount == 0
         }
@@ -58,8 +58,8 @@ class TodoCtrl: Controller<TodoScope>("TodoCtrl") {
         watch<String>("location.path()", { path ->
             Ng.log.info(path)
             statusFilter = when(path) {
-                "/active" -> StatusFilter(false)
-                "/completed" -> StatusFilter(true)
+                "/active" -> StatusFilter()(false)
+                "/completed" -> StatusFilter()(true)
                 else -> null
             }
         })

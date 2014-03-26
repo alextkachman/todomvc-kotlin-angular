@@ -101,4 +101,5 @@ object Ng : WellKnown() {
     val timeout: (()->Unit,Long,Boolean)->Unit by predefined("\$timeout")
     val location: Location by predefined("\$location")
     val parse: (code: String)->((scope: Scope)->Any?) by predefined("\$parse")
+    val filter: (name: String)->((data: Array<*>, how: Any?)->Array<*>) by predefined("\$filter")
 }
