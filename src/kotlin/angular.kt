@@ -1,19 +1,21 @@
 package angular
 
 native trait Angular {
-    fun module(name: String, deps: Array<String>): AngularModule
+    fun module(name: String, deps: Array<String>): Module
 
     fun injector(modules: Array<String>) : Injector
+
+    val noop: () -> Any
 }
 
-native trait AngularModule {
-    fun directive(name: String, injectsAndDef: Array<Any>): AngularModule
-    fun factory (name: String, injectsAndDef: Array<Any>): AngularModule
-    fun constant (name: String, value: Any?): AngularModule
-    fun value (name: String, value: Any?): AngularModule
-    fun controller(name: String, injectsAndDef: Array<Any>): AngularModule
-    fun config(injectsAndDef: Array<Any>): AngularModule
-    fun run(injectsAndDef: Array<Any>): AngularModule
+native trait Module {
+    fun directive(name: String, injectsAndDef: Array<Any>): Module
+    fun factory (name: String, injectsAndDef: Array<Any>): Module
+    fun constant (name: String, value: Any?): Module
+    fun value (name: String, value: Any?): Module
+    fun controller(name: String, injectsAndDef: Array<Any>): Module
+    fun config(injectsAndDef: Array<Any>): Module
+    fun run(injectsAndDef: Array<Any>): Module
 }
 
 native trait Injector {
@@ -29,11 +31,6 @@ native trait Elem {
     fun get(index: Int): ElemNode
 }
 
-native("Object")
-open class AngularDirective {
-    var link: (scope: Scope, elem: Elem, attrs: AngularAttrs) -> Unit = js.noImpl
-}
-
 native trait AngularAttrs {
 }
 
@@ -46,7 +43,7 @@ native trait Location {
     fun path(p: String)
 }
 
-native trait Scope {
+native trait Scope : InjectorAware {
     fun <T> `$watch`(exp: Any, todo: (T) -> Unit, deepWatch: Boolean) = js.noImpl
     fun <T> `$watch`(exp: Any, todo: (T) -> Unit)  = js.noImpl
     fun `$apply`(func: Any): Unit  = js.noImpl
@@ -66,3 +63,6 @@ native trait Log {
 }
 
 native("angular") val angular: Angular = js.noImpl
+
+fun <T> noop() = angular.noop as T
+

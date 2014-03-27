@@ -15,19 +15,12 @@ fun Todo(title: String, completed: Boolean = false) : Todo {
     return todo
 }
 
-class TodoService() {
-    class object {
-        private val STORAGE_ID = "TODOS-angularjs"
-    }
 
-    var todos = {
-        var data = localStorage.getItem(STORAGE_ID)
-        if (data == null) {
-            data = "[]"
-        }
-        Ng.log.info(data!!)
-        JSON.parse<Array<Todo>>(data!!)
-    }()
+fun InjectorAware.ngTodoService() = instance<TodoService>("todoService")
+
+class TodoService() : Service() {
+    val todoStorage = ngTodoStorage()
+    var todos = todoStorage.get()
 
     fun addTodo(newTodo: String) {
         if(newTodo.length > 0) {
@@ -40,9 +33,7 @@ class TodoService() {
     }
 
     fun save() {
-        val stringify = JSON.stringify(todos)
-        Ng.log.info(stringify)
-        localStorage.setItem(STORAGE_ID, stringify)
+        todoStorage.put(todos)
     }
 
     fun markAll(completed: Boolean) {
