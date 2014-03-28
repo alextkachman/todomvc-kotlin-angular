@@ -2,22 +2,29 @@ package todo
 
 import angular.*
 
-val todomvc = module("todomvc") {
-    factory("todoStorage") {
-        TodoStorage()
-    }
-    factory("todoService") {
-        TodoService()
-    }
-    directive("todoFocus") {
-        TodoFocus()
-    }
-    directive("todoBlur") {
-        TodoBlur()
-    }
-    controller(TodoCtrl())
+native class Todo() {
+    var title: String? = js.noImpl
+    var completed: Boolean = js.noImpl
+}
+
+fun Todo(title: String, completed: Boolean = false) : Todo {
+    val todo = json() as Todo
+    todo.title = title
+    todo.completed = completed
+    return todo
 }
 
 fun main(args: Array<String>) {
-    todomvc
+    module("todomvc") {
+        factory(TodoStorage)
+
+        factory("todoService") {
+            TodoService()
+        }
+
+        directive("todoFocus", todoFocus)
+        directive("todoBlur", todoBlur)
+
+        controller(TodoCtrl)
+    }
 }

@@ -1,5 +1,9 @@
 package angular
 
+native trait Injector {
+    fun <T> get(name: String) : T
+}
+
 native("Object") trait InjectorAware {
     native val injector: Injector
 }
@@ -9,6 +13,16 @@ fun <T> InjectorAware.instance(name: String) = injector.get<T>(name)
 open class InjectorAwareImpl : InjectorAware {
     class object {
         var now: Injector? = null
+
+        fun <T> with(injector: Injector, action: ()->T): T {
+            now = injector
+            try {
+                return action()
+            }
+            finally {
+                now = null
+            }
+        }
     }
     override val injector: Injector
         get() = (this as Json).get("__injector") as Injector
@@ -18,23 +32,5 @@ open class InjectorAwareImpl : InjectorAware {
     }
 }
 
-abstract class Controller<S: Scope>(val name: String) {
-    abstract fun S.invoke() : Unit
-}
+fun InjectorAware.ngInjector() = injector
 
-open class Directive(val name: String) : InjectorAwareImpl() {
-    native var link: (scope: Scope, elem: Elem, attrs: AngularAttrs) -> Unit = noop()
-}
-
-open class Service(): InjectorAwareImpl() {
-}
-
-object AngularAnchor {
-    val name = "AngularAnchor";
-
-    {
-        angular.module(name, array()).run(array("\$injector", "\$rootScope", { (injector: Injector, rootScope: Scope): Unit ->
-            (rootScope as Json).set("injector", injector)
-        }))
-    }
-}

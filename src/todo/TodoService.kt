@@ -3,23 +3,12 @@ package todo
 import js.LocalStorage
 import angular.*
 
-native class Todo() {
-    var title: String? = js.noImpl
-    var completed: Boolean = js.noImpl
-}
-
-fun Todo(title: String, completed: Boolean = false) : Todo {
-    val todo = json() as Todo
-    todo.title = title
-    todo.completed = completed
-    return todo
-}
-
-
-fun InjectorAware.ngTodoService() = instance<TodoService>("todoService")
-
 class TodoService() : Service() {
-    val todoStorage = ngTodoStorage()
+    class object : ServiceFactory<TodoService>("todoService") {
+        override fun create() = TodoService()
+    }
+
+    val todoStorage = TodoStorage.instance(this)
     var todos = todoStorage.get()
 
     fun addTodo(newTodo: String) {

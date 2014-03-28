@@ -5,10 +5,9 @@ import angular.*
 /**
  * API for TodoStorage
  */
-
-fun InjectorAware.ngTodoStorage() = instance<ITodoStorage>("todoStorage")
-
 abstract class ITodoStorage() : Service() {
+    class object : ServiceFactory<ITodoStorage>("todoStorage")
+
     abstract fun get(): Array<Todo>
     abstract fun put(todos: Array<Todo>): Unit
 }
@@ -17,8 +16,10 @@ abstract class ITodoStorage() : Service() {
  *  Implementation for TodoStorage
  */
 class TodoStorage() : ITodoStorage() {
-    class object {
+    class object : ServiceFactory<ITodoStorage>(ITodoStorage.name) {
         private val STORAGE_ID = "TODOS-angularjs"
+
+        override fun create() = TodoStorage()
     }
 
     override fun get() : Array<Todo> {

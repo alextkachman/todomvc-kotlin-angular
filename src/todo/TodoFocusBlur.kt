@@ -7,26 +7,25 @@ native trait TodoAttrs : AngularAttrs {
     val todoFocus: String
 }
 
-class TodoFocus : Directive("todoFocus") {
-    {
-        link = { scope, elem, attrs ->
-            attrs as TodoAttrs
-            scope.watch<Boolean>(attrs.todoFocus, { newVal ->
-                if(newVal) {
-                    ngTimeout()({ (elem as Array<ElemNode>)[0].focus() }, 0, false)
-                }
-            })
-        }
+var todoFocus = { Directive.() ->
+    val ngTimeout = ngTimeout()
+    link = { scope, elem, attrs ->
+        attrs as TodoAttrs
+        scope.watch<Boolean>(attrs.todoFocus, { newVal ->
+            if(newVal) {
+                ngTimeout({
+                    (elem as Array<ElemNode>)[0].focus()
+                }, 0, false)
+            }
+        })
     }
 }
 
-class TodoBlur : Directive("todoBlur") {
-    {
-        link = { scope, elem, attrs ->
-            attrs as TodoAttrs
-            elem.bind("blur") {
-                scope.apply(attrs.todoBlur)
-            }
+var todoBlur = { Directive.() ->
+    link = { scope, elem, attrs ->
+        attrs as TodoAttrs
+        elem.bind("blur") {
+            scope.apply(attrs.todoBlur)
         }
     }
 }

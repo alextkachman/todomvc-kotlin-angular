@@ -2,43 +2,41 @@ package todo
 
 import angular.*
 
-class TodoCtrl(): Controller<TodoCtrl.TodoScope>("TodoCtrl") {
-    class object {
-        native trait TodoScope: Scope {
-            var todos: Array<Todo>
-            var newTodo: String
-            var editedTodo: Todo?
-            var remainingCount: Int
-            var completedCount: Int
-            var allChecked: Boolean
-            var statusFilter: Json?
-            var location: Location
-            var addTodo: () -> Unit
-            var editTodo: (Todo) -> Unit
-            var doneEditing: (Todo) -> Unit
-            var removeTodo: (Todo) -> Unit
-            var clearCompletedTodos: () -> Unit
-            var markAll: (Boolean) -> Unit
-        }
+object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
+    native trait TodoScope: Scope {
+        var todos: Array<Todo>
+        var newTodo: String
+        var editedTodo: Todo?
+        var remainingCount: Int
+        var completedCount: Int
+        var allChecked: Boolean
+        var statusFilter: Json?
+        var location: Location
+        var addTodo: () -> Unit
+        var editTodo: (Todo) -> Unit
+        var doneEditing: (Todo) -> Unit
+        var removeTodo: (Todo) -> Unit
+        var clearCompletedTodos: () -> Unit
+        var markAll: (Boolean) -> Unit
+    }
 
-        fun statusFilter(v: Boolean) : Json{
-            // todo: better syntax needed
-            val json = json()
-            json["completed"] = v
-            return json
-        }
+    fun statusFilter(v: Boolean) : Json{
+        // todo: better syntax needed
+        val json = json()
+        json["completed"] = v
+        return json
     }
 
     override fun TodoScope.invoke() {
         location = ngLocation()
 
-        val todoService = ngTodoService()
+        val todoService = TodoService.instance(this)
 
         todos = todoService.todos
         newTodo = ""
         editedTodo = null
 
-        val filter = ngFilter()("filter")
+        val filter = ngFilter("filter")
         watch<Unit>("todos", true) {
             remainingCount = filter(todos, statusFilter(false)).size
             completedCount = todoService.todos.length - remainingCount
@@ -91,3 +89,4 @@ class TodoCtrl(): Controller<TodoCtrl.TodoScope>("TodoCtrl") {
         }
     }
 }
+
