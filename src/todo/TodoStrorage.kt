@@ -27,13 +27,13 @@ class TodoStorage() : ITodoStorage() {
         if (data == null) {
             data = "[]"
         }
-        ngLog().info(data!!)
+        ngLog.info(data!!)
         return JSON.parse<Array<Todo>>(data!!)
     }
 
     override fun put(todos: Array<Todo>) : Unit {
         val stringify = JSON.stringify(todos)
-        ngLog().info(stringify)
+        ngLog.info(stringify)
         localStorage.setItem(STORAGE_ID, stringify)
     }
 }

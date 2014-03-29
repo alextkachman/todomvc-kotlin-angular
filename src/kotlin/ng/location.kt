@@ -5,4 +5,5 @@ native trait Location {
     fun path(p: String)
 }
 
-fun InjectorAware.ngLocation() = instance<Location>("\$location")
+val InjectorAware.ngLocation: Location
+    get() = instance("\$location")

@@ -8,7 +8,6 @@ native trait TodoAttrs : AngularAttrs {
 }
 
 var todoFocus = { Directive.() ->
-    val ngTimeout = ngTimeout()
     link = { scope, elem, attrs ->
         attrs as TodoAttrs
         scope.watch<Boolean>(attrs.todoFocus, { newVal ->

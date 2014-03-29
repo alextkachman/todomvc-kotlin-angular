@@ -28,7 +28,7 @@ object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
     }
 
     override fun TodoScope.invoke() {
-        location = ngLocation()
+        location = ngLocation
 
         val todoService = TodoService.instance(this)
 
@@ -49,7 +49,7 @@ object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
         }
 
         watch<String>("location.path()", { path ->
-            ngLog().info(path)
+            ngLog.info(path)
             statusFilter = when(path) {
                 "/active" -> statusFilter(false)
                 "/completed" -> statusFilter(true)
