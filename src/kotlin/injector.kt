@@ -24,6 +24,7 @@ open class InjectorAwareImpl : InjectorAware {
             }
         }
     }
+
     override val injector: Injector
         get() = (this as Json).get("__injector") as Injector
 
@@ -31,6 +32,3 @@ open class InjectorAwareImpl : InjectorAware {
         (this as Json).set("__injector", now!!)
     }
 }
-
-fun InjectorAware.ngInjector() = injector
-

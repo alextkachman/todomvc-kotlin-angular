@@ -12,7 +12,7 @@ var todoFocus = { Directive.() ->
         attrs as TodoAttrs
         scope.watch<Boolean>(attrs.todoFocus, { newVal ->
             if(newVal) {
-                ngTimeout({
+                ijTimeout({
                     (elem as Array<ElemNode>)[0].focus()
                 }, 0, false)
             }

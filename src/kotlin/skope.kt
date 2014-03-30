@@ -11,3 +11,6 @@ fun <T> Scope.watch(what: String, deepWatch: Boolean, onChange: (T)-> Unit) = th
 
 fun Scope.apply(what: String)   = this.`$apply` (what)
 fun Scope.apply(what: ()->Unit) = this.`$apply` (what)
+
+val InjectorAware.ijRootScope: Scope
+    get() = instance("\$rootScope")

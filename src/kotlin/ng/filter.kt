@@ -1,8 +1,8 @@
 package angular
 
-val InjectorAware.ngFilter : (String)->((Array<*>, Any?)->Array<*>)
+val InjectorAware.ijFilter: (String)->((Array<*>, Any?)->Array<*>)
     get() = instance("\$filter")
 
-fun InjectorAware.ngFilter(name: String) = ngFilter.invoke(name)
+fun InjectorAware.ijFilter(name: String) = ijFilter.invoke(name)
 
 

@@ -28,7 +28,7 @@ object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
     }
 
     override fun TodoScope.invoke() {
-        location = ngLocation
+        location = ijLocation
 
         val todoService = TodoService.instance(this)
 
@@ -36,7 +36,7 @@ object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
         newTodo = ""
         editedTodo = null
 
-        val filter = ngFilter("filter")
+        val filter = ijFilter("filter")
         watch<Unit>("todos", true) {
             remainingCount = filter(todos, statusFilter(false)).size
             completedCount = todoService.todos.length - remainingCount
@@ -49,7 +49,7 @@ object TodoCtrl : Controller<TodoCtrl.TodoScope>("TodoCtrl") {
         }
 
         watch<String>("location.path()", { path ->
-            ngLog.info(path)
+            ijLog.info(path)
             statusFilter = when(path) {
                 "/active" -> statusFilter(false)
                 "/completed" -> statusFilter(true)

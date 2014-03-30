@@ -19,6 +19,11 @@ private object AnchorModule {
         angular.module(name, array()).run(array("\$injector", "\$rootScope", { (injector: Injector, rootScope: Scope): Unit ->
             (rootScope as Json).set("injector", injector)
         }))
+        .factory("ijInjectorAware", array("\$injector", { (injector: Injector): InjectorAware ->
+            InjectorAwareImpl.with(injector) {
+                InjectorAwareImpl()
+            }
+        }))
     }
 }
 
@@ -39,3 +44,6 @@ fun module(name: String, deps: Array<String>? = null, declaration: (Module.()->U
     return module
 }
 
+fun Module.run(body: InjectorAware.()->Unit) = run(array("ijInjectorAware",{ (ijInjector: InjectorAware): Unit ->
+    ijInjector.body()
+}))

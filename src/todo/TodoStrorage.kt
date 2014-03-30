@@ -10,12 +10,13 @@ abstract class ITodoStorage() : Service() {
 
     abstract fun get(): Array<Todo>
     abstract fun put(todos: Array<Todo>): Unit
+    abstract fun clear(): Unit
 }
 
 /**
  *  Implementation for TodoStorage
  */
-class TodoStorage() : ITodoStorage() {
+class TodoStorage : ITodoStorage() {
     class object : ServiceFactory<ITodoStorage>(ITodoStorage.name) {
         private val STORAGE_ID = "TODOS-angularjs"
 
@@ -27,13 +28,17 @@ class TodoStorage() : ITodoStorage() {
         if (data == null) {
             data = "[]"
         }
-        ngLog.info(data!!)
         return JSON.parse<Array<Todo>>(data!!)
     }
 
     override fun put(todos: Array<Todo>) : Unit {
         val stringify = JSON.stringify(todos)
-        ngLog.info(stringify)
         localStorage.setItem(STORAGE_ID, stringify)
     }
+
+    override fun clear() {
+    }
 }
+
+val InjectorAware.ijTodoStorage: ITodoStorage
+    get() = instance(ITodoStorage.name)

@@ -3,12 +3,12 @@ package todo
 import js.LocalStorage
 import angular.*
 
-class TodoService() : Service() {
+class TodoService : Service() {
     class object : ServiceFactory<TodoService>("todoService") {
         override fun create() = TodoService()
     }
 
-    val todoStorage = TodoStorage.instance(this)
+    val todoStorage = ijTodoStorage
     var todos = todoStorage.get()
 
     fun addTodo(newTodo: String) {
@@ -33,3 +33,6 @@ class TodoService() : Service() {
         todos = todos.filter({ !it.completed })
     }
 }
+
+val InjectorAware.ijTodoService: TodoService
+    get() = instance(TodoService.name)

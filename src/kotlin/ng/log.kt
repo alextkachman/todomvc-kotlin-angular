@@ -7,5 +7,5 @@ native trait Log {
     fun warn(msg: Any)
 }
 
-val InjectorAware.ngLog: Log
+val InjectorAware.ijLog: Log
   get ()= instance("\$log")

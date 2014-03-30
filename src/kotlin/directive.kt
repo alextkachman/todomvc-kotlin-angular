@@ -3,7 +3,7 @@ package angular
 native trait AngularAttrs {
 }
 
-native class Directive() : InjectorAwareImpl() {
+class Directive() : InjectorAwareImpl() {
     native var link: ((scope: Scope, elem: Elem, attrs: AngularAttrs) -> Unit)? = null
 }
 
